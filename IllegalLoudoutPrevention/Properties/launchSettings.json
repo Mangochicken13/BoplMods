@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "IllegalLoudoutPrevention": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Bopl Battle Debug\\BoplBattle.exe"
+    }
+  }
+}
