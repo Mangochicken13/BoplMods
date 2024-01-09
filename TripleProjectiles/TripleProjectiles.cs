@@ -22,16 +22,35 @@ namespace TripleProjectiles
 
         private void Awake()
         {
-            Log = base.Logger;
+            Log = this.Logger;
 
             //Harmony stuff
             Harmony harmony = new Harmony(ModID);
 
             harmony.PatchAll();
 
+            On.ShootScaleChange.Shoot += ShootScaleChange_Shoot1;
+
             IsLoaded = true;
 
             Logger.LogInfo($"Plugin {ModName} is loaded!");
+        }
+
+        private void ShootScaleChange_Shoot1(On.ShootScaleChange.orig_Shoot orig, ShootScaleChange self, Vec2 firepointFIX, Vec2 directionFIX, ref bool hasFired, int playerId, bool alreadyHitWater)
+        {
+            orig.Invoke(self, firepointFIX, directionFIX, ref hasFired, playerId, alreadyHitWater);
+            if (ShootScaleChange_Shoot.HasTripledThisShot || alreadyHitWater) 
+            {
+                return;
+            }
+
+            hasFired = false;
+            Vec2 newDir = Helpers.RotateBy(directionFIX, (Fix)20);
+            orig.Invoke(self, firepointFIX + ((Fix)2 * newDir), newDir, ref hasFired, playerId, alreadyHitWater);
+            
+            hasFired = false;
+            newDir = Helpers.RotateBy(directionFIX, (Fix)(-20));
+            orig.Invoke(self, firepointFIX + ((Fix)2 * newDir), newDir, ref hasFired, playerId, alreadyHitWater);
         }
     }
 

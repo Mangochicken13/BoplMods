@@ -86,6 +86,8 @@ namespace TripleProjectiles
         // try and call it three times with different angles??
         static readonly Fix AngleBetween = (Fix)20;
 
+        public static bool HasTripledThisShot = false;
+
         [HarmonyPrefix]
         public static bool Prefix(Vec2 firepointFIX, Vec2 directionFIX, ref bool hasFired, int playerId, bool alreadyHitWater = false)
         {
@@ -94,15 +96,19 @@ namespace TripleProjectiles
                 return true;
             }
 
-            if (alreadyHitWater)
+            if (alreadyHitWater || HasTripledThisShot)
             {
                 return true;
             }
 
-            var vec2 = Helpers.RotateBy(directionFIX, AngleBetween);
-            
-
+            HasTripledThisShot = true;
             return true;
+        }
+
+        [HarmonyPostfix]
+        public static void Postfix()
+        {
+            HasTripledThisShot = false;
         }
     }
 }
