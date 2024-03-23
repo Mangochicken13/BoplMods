@@ -12,6 +12,10 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
 	<DebugType>Full</DebugType>
   </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>Full</DebugType>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.8" PrivateAssets="all" />
@@ -26,10 +30,10 @@
   
   <ItemGroup>
 	<Reference Include="Assembly-CSharp">
-	  <HintPath>..\..\Assemblies\Assembly-CSharp.dll</HintPath>
+	  <HintPath>..\libs\Assembly-CSharp.dll</HintPath>
 	</Reference>
     <Reference Include="Facepunch.Steamworks.Win64">
-      <HintPath>..\..\..\..\BoplBattle_Data\Managed\Facepunch.Steamworks.Win64.dll</HintPath>
+      <HintPath>..\..\..\BoplBattle_Data\Managed\Facepunch.Steamworks.Win64.dll</HintPath>
     </Reference>
     <Reference Include="MMHOOK_Assembly-CSharp">
       <HintPath>..\..\Assemblies\MMHOOK_Assembly-CSharp.dll</HintPath>
