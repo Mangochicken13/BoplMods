@@ -1,5 +1,6 @@
 ﻿using BoplFixedMath;
 using HarmonyLib;
+using TripleProjectiles.AbilityComponents;
 
 namespace TripleProjectiles.Patches
 {
@@ -15,6 +16,11 @@ namespace TripleProjectiles.Patches
         [HarmonyPatch(typeof(ShootScaleChange), nameof(ShootScaleChange.Awake))]
         public static void AddExtraVisuals(ShootScaleChange __instance)
         {
+            if (!TripleProjectiles.IsFullGame)
+            {
+                return;
+            }
+
             var cp = __instance.gameObject.AddComponent<ScaleChangeExtraVisuals>();
             cp.parent = __instance;
             cp.InstantiatePrefabs(__instance.RaycastParticlePrefab, __instance.RaycastParticleHitPrefab, __instance.flarePrefab);

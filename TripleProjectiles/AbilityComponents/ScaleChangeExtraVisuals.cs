@@ -1,7 +1,7 @@
 ﻿using BoplFixedMath;
 using UnityEngine;
 
-namespace TripleProjectiles
+namespace TripleProjectiles.AbilityComponents
 {
     public class ScaleChangeExtraVisuals : MonoBehaviour
     {

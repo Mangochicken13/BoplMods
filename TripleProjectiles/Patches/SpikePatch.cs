@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using BoplFixedMath;
 using UnityEngine;
+using TripleProjectiles.AbilityComponents;
 
 namespace TripleProjectiles.Patches
 {
@@ -15,6 +16,11 @@ namespace TripleProjectiles.Patches
         [HarmonyPatch(typeof(Spike), nameof(Spike.Awake))]
         public static void AddExtraVisuals(Spike __instance)
         {
+            if (!TripleProjectiles.IsFullGame)
+            {
+                return;
+            }
+
             var cp = __instance.gameObject.AddComponent<ExtraSpikeReferences>();
             cp.parent = __instance;
             cp.InstantiatePrefabs(__instance.dustParticle2Prefab);
@@ -24,6 +30,11 @@ namespace TripleProjectiles.Patches
         [HarmonyPatch(typeof(Spike), nameof(Spike.CastSpike))]
         public static void CastSpikeTriple(Spike __instance)
         {
+            if (!TripleProjectiles.IsFullGame)
+            {
+                return;
+            }
+
             var cp = __instance.GetComponent<ExtraSpikeReferences>();
 
             TripleProjectiles.Log.LogInfo(__instance);

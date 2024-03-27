@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace TripleProjectiles
+namespace TripleProjectiles.AbilityComponents
 {
     public class ExtraSpikeReferences : MonoBehaviour
     {
@@ -51,7 +51,7 @@ namespace TripleProjectiles
             }
             else
             {
-                _dustParticleFar= farDustParticleLeft;
+                _dustParticleFar = farDustParticleLeft;
             }
             _dustParticleFar.transform.parent.position = (Vector3)position;
             _dustParticleFar.transform.parent.up = parent.transform.up;
@@ -61,7 +61,7 @@ namespace TripleProjectiles
 
             if (right)
             {
-                spikeRight = FixTransform.InstantiateFixed<SpikeAttack>(parent.spikePrefab, position);
+                spikeRight = FixTransform.InstantiateFixed(parent.spikePrefab, position);
                 component = spikeRight.GetComponent<FixTransform>();
                 component.up = vec;
                 component.transform.SetParent(rect2.transform);
@@ -75,7 +75,7 @@ namespace TripleProjectiles
             }
             else
             {
-                spikeLeft = FixTransform.InstantiateFixed<SpikeAttack>(parent.spikePrefab, position);
+                spikeLeft = FixTransform.InstantiateFixed(parent.spikePrefab, position);
                 component = spikeLeft.GetComponent<FixTransform>();
                 component.up = vec;
                 component.transform.SetParent(rect2.transform);
@@ -87,8 +87,8 @@ namespace TripleProjectiles
                 spikeLeft.GetHitbox().Scale = parent.body.fixtrans.Scale;
                 attachedGround.GetGroundBody().AddForceAtPosition(vec * parent.castForce, parent.body.position, ForceMode2D.Force);
             }
-            
-            
+
+
         }
     }
 }

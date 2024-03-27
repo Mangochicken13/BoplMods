@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using BoplFixedMath;
+using TripleProjectiles.AbilityComponents;
 
 namespace TripleProjectiles.Patches
 {
@@ -14,6 +15,10 @@ namespace TripleProjectiles.Patches
         [HarmonyPatch(typeof(ShootQuantum), nameof(ShootQuantum.Awake))]
         public static void AddExtraVisuals(ShootQuantum __instance)
         {
+            if (!TripleProjectiles.IsFullGame)
+            {
+                return;
+            }
             var cp = __instance.gameObject.AddComponent<ShootQuantumExtraVisuals>();
             cp.parent = __instance;
             cp.InstantiatePrefabs(__instance.RaycastParticlePrefab, __instance.RaycastParticleHitPrefab);

@@ -1,7 +1,7 @@
 ﻿using BoplFixedMath;
 using UnityEngine;
 
-namespace TripleProjectiles
+namespace TripleProjectiles.AbilityComponents
 {
     public class ShootQuantumExtraVisuals : MonoBehaviour
     {
@@ -14,25 +14,24 @@ namespace TripleProjectiles
         private ParticleSystem hitParticleRight;
 
         public ShootQuantum parent;
+
+        // TODO: try and stop the flash of particles when the game instantiates the prefabs, potentially instantiate them at a specific position
         public void InstantiatePrefabs(ParticleSystem rayPrefab, ParticleSystem hitPrefab)
         {
             rayParticleLeft = Instantiate(rayPrefab);
-            rayParticleLeft.transform.position.Set(1500, 1500, 1500);
             rayParticleChildLeft = Instantiate(rayPrefab);
-            rayParticleChildLeft.transform.position.Set(1500, 1500, 1500);
             hitParticleLeft = Instantiate(hitPrefab);
 
             rayParticleRight = Instantiate(rayPrefab);
-            rayParticleRight.transform.position.Set(1500, 1500, 1500);
             rayParticleChildRight = Instantiate(rayPrefab);
-            rayParticleChildRight.transform.position.Set(1500, 1500, 1500);
             hitParticleRight = Instantiate(hitPrefab);
         }
 
+        // Try and update this to call the base method instead, this will break if it's logic is changed in the future
         public void DirectionalShoot(Vec2 firepointFIX, Vec2 directionFIX, ref bool hasFired, int playerId, bool alreadyHitWater = false, bool right = false)
         {
             Vec2 vec = directionFIX;
-            //AudioManager.Get().Play("laserShoot");
+            //AudioManager.Get().Play("laserShoot"); // sound already plays from the base gun
             Debug.DrawRay((Vector2)firepointFIX, (float)parent.maxDistance * (Vector2)vec, new Color(255f, 255f, 0f));
             RaycastInformation raycastInformation = DetPhysics.Get().PointCheckAllRoundedRects(firepointFIX);
             if (!raycastInformation)
@@ -42,9 +41,9 @@ namespace TripleProjectiles
             if (!raycastInformation && firepointFIX.y <= SceneBounds.WaterHeight && !alreadyHitWater)
             {
                 SpawnRayCastEffect((Vector3)firepointFIX, (Vector3)vec, (float)raycastInformation.nearDist, false, Vec2.up, true, right);
-                StopDirectionalRayParticle(right);
                 //this.rayParticle.Stop();
-                GameObject gameObject = Object.Instantiate<GameObject>(parent.WaterRing);
+                StopDirectionalRayParticle(right); // need to stop the right particle system
+                GameObject gameObject = Instantiate(parent.WaterRing);
                 //AudioManager.Get().Play("waterExplosion");
                 gameObject.transform.position = new Vector3(parent.WaterRing.transform.position.x + (float)raycastInformation.nearPos.x, parent.WaterRing.transform.position.y, parent.WaterRing.transform.position.z);
                 return;
@@ -65,7 +64,7 @@ namespace TripleProjectiles
                     vec = new Vec2(vec.x, vec.y * -Fix.One);
                     DirectionalShoot(raycastInformation.nearPos, vec, ref hasFired, playerId, true, right);
                     Debug.DrawRay((Vector2)raycastInformation.nearPos, (Vector2)(vec * parent.maxDistance), Color.magenta);
-                    GameObject gameObject2 = Object.Instantiate<GameObject>(parent.WaterRing);
+                    GameObject gameObject2 = Instantiate(parent.WaterRing);
                     //AudioManager.Get().Play("waterExplosion");
                     gameObject2.transform.position = new Vector3(parent.WaterRing.transform.position.x + (float)raycastInformation.nearPos.x, parent.WaterRing.transform.position.y, parent.WaterRing.transform.position.z);
                     return;
@@ -73,7 +72,7 @@ namespace TripleProjectiles
                 if (raycastInformation.layer == LayerMask.NameToLayer("EffectorZone") || raycastInformation.layer == LayerMask.NameToLayer("weapon"))
                 {
                     GameObject gameObject3 = raycastInformation.pp.fixTrans.gameObject;
-                    QuantumTunnel quantumTunnel = FixTransform.InstantiateFixed<QuantumTunnel>(parent.QuantumTunnelPrefab, raycastInformation.pp.fixTrans.position);
+                    QuantumTunnel quantumTunnel = FixTransform.InstantiateFixed(parent.QuantumTunnelPrefab, raycastInformation.pp.fixTrans.position);
                     if (!raycastInformation.pp.fixTrans.gameObject.CompareTag("InvincibilityZone"))
                     {
                         quantumTunnel.Init(gameObject3, parent.WallDuration, null, false);
@@ -92,7 +91,7 @@ namespace TripleProjectiles
                     }
                     if (quantumTunnel2 == null)
                     {
-                        quantumTunnel2 = FixTransform.InstantiateFixed<QuantumTunnel>(parent.QuantumTunnelPrefab, raycastInformation.pp.fixTrans.position);
+                        quantumTunnel2 = FixTransform.InstantiateFixed(parent.QuantumTunnelPrefab, raycastInformation.pp.fixTrans.position);
                         ShootQuantum.spawnedQuantumTunnels.Add(quantumTunnel2);
                     }
                     if (gameObject4.layer == LayerMask.NameToLayer("wall"))
@@ -160,15 +159,15 @@ namespace TripleProjectiles
             ParticleSystem _hitParticle;
             if (right)
             {
-                particleSystem = (reflected ? rayParticleChildRight : rayParticleRight);
+                particleSystem = reflected ? rayParticleChildRight : rayParticleRight;
                 _hitParticle = hitParticleRight;
             }
             else
             {
-                particleSystem = (reflected ? rayParticleChildLeft : rayParticleLeft);
+                particleSystem = reflected ? rayParticleChildLeft : rayParticleLeft;
                 _hitParticle = hitParticleLeft;
             }
-                
+
             ParticleSystem.ShapeModule shape = particleSystem.shape;
             ParticleSystem.EmissionModule emission = particleSystem.emission;
             ParticleSystem.Burst burst = emission.GetBurst(0);
