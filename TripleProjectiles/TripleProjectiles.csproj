@@ -4,24 +4,24 @@
     <TargetFramework>net46</TargetFramework>
     <AssemblyName>TripleProjectiles</AssemblyName>
     <Description>My first plugin</Description>
-    <Version>1.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
 	<DebugType>Full</DebugType>
   </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>Full</DebugType>
+	
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+	<DebugType>None</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.0.8" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
-    <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
-    <PackageReference Include="UnityEngine.Modules" Version="2019.4.5" IncludeAssets="compile" />
+	<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" PrivateAssets="all" />
+    <PackageReference Include="UnityEngine.Modules" Version="2019.4.40" IncludeAssets="compile" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
@@ -29,18 +29,21 @@
   </ItemGroup>
   
   <ItemGroup>
-	<Reference Include="Assembly-CSharp">
-	  <HintPath>..\libs\Assembly-CSharp.dll</HintPath>
-	</Reference>
+    <Reference Include="Assembly-CSharp" Publicize="True">
+      <HintPath>..\libs\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Facepunch.Steamworks.Win64">
       <HintPath>..\..\..\BoplBattle_Data\Managed\Facepunch.Steamworks.Win64.dll</HintPath>
+		<Private>false</Private>
     </Reference>
     <Reference Include="MMHOOK_Assembly-CSharp">
       <HintPath>..\..\Assemblies\MMHOOK_Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
   
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="call ../CopyToDebug.bat $(OutDir) $(AssemblyName) &quot;C:\Program Files (x86)\Steam\steamapps\common\Bopl Battle Debug\BepInEx\plugins\Debugging&quot;" />
+    <Exec Command="if $(Configuration) == Release (&quot;../PackageForThunderstore.py&quot; -n $(AssemblyName) -v $(PackageVersion) -o $(Outdir)) else (call ../CopyToDebug.bat $(OutDir) $(AssemblyName) &quot;C:\Program Files (x86)\Steam\steamapps\common\Bopl Battle Debug\BepInEx\plugins\Debugging&quot;)" />
   </Target>
 </Project>
