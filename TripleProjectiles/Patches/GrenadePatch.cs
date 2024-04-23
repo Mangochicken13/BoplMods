@@ -72,11 +72,17 @@ namespace TripleProjectiles.Patches
             cp.FireGrenade(AngleBetween, false);
         }
 
-        //[HarmonyPatch(typeof(Grenade), nameof(Grenade.UpdateSim))]
-        //[HarmonyPrefix]
-        public static void GrenadeLogger(Grenade __instance)
+        [HarmonyPatch(typeof(ThrowItem2), nameof(ThrowItem2.OldUpdate))]
+        [HarmonyPostfix]
+        public static void GrenadeLogger(ThrowItem2 __instance)
         {
-            TripleProjectiles.Log.LogInfo(__instance.selfDestructDelay);
+            if (!TripleProjectiles.IsFullGame)
+            {
+                return;
+            }
+            
+            var cp = __instance.gameObject.GetComponent<ExtraGrenades>();
+            cp.UpdateGrenades();
         }
 
     }

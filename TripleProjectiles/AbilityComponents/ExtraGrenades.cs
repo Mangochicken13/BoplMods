@@ -10,12 +10,12 @@ namespace TripleProjectiles.AbilityComponents
 {
     public class ExtraGrenades : MonoBehaviour
     {
-        public ThrowItem2 parent;
+        internal ThrowItem2 parent;
 
-        public Grenade leftGrenade;
-        public BoplBody leftGrenadeBody;
-        public Grenade rightGrenade;
-        public BoplBody rightGrenadeBody;
+        internal Grenade leftGrenade;
+        internal BoplBody leftGrenadeBody;
+        internal Grenade rightGrenade;
+        internal BoplBody rightGrenadeBody;
 
         public void InitializeGrenades(Grenade grenade, BoplBody body, bool right)
         {
@@ -28,6 +28,19 @@ namespace TripleProjectiles.AbilityComponents
             {
                 leftGrenade = grenade;
                 leftGrenadeBody = body;
+            }
+        }
+
+        public void UpdateGrenades()
+        {
+            if (parent.grenade == null)
+            {
+                return;
+            }
+            if (!parent.hasFired && !parent.grenade.hasBeenThrown)
+            {
+                leftGrenadeBody.position = parent.dummyPos();
+                rightGrenadeBody.position = parent.dummyPos();
             }
         }
 
@@ -67,7 +80,7 @@ namespace TripleProjectiles.AbilityComponents
                 parent.physics.gravity_modifier = (Fix)1L;
                 //this.hasFired = true;
                 //AudioManager.Get().Play("throwSmallItem");
-                grenade.UpdateSim(grenade.detonationTime - grenade.selfDestructDelay);
+                //grenade.UpdateSim(grenade.detonationTime - grenade.selfDestructDelay);
                 return;
             }
         }
