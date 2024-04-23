@@ -8,7 +8,7 @@ namespace TripleProjectiles.Patches
     public class Bow_Patches
     {
         static readonly int NumArrows = 3; // must be odd for now, will need extra logic for even
-        static readonly Fix AngleBetween = (Fix)12;
+        static readonly Fix AngleBetween = (Fix)14;
 
         [HarmonyPostfix] // This being a postfix means it runs afterwards, and doesn't need to return false in a prefix causing incompatabilities
         [HarmonyPatch(nameof(BowTransform.Shoot))]
@@ -35,7 +35,7 @@ namespace TripleProjectiles.Patches
                     continue;
                 }
 
-                TripleProjectiles.Log.LogInfo($"{i}: {vec}");
+                //TripleProjectiles.Log.LogInfo($"{i}: {vec}");
 
                 // Put this in its own utility function
                 // spawning the other arrows
@@ -62,7 +62,7 @@ namespace TripleProjectiles.Patches
                 return;
             }
 
-            __instance.body.AddForce(-inputVector * (Fix)0.5); // add extra logic if i 
+            __instance.body.AddForce(-inputVector * (Fix)0.25 * (Fix)(NumArrows - 1)); // add extra logic if i 
         }
     }
 }
